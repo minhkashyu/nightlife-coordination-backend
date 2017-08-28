@@ -7,12 +7,16 @@ import config from './../../config/main';
 
 export default {
     getBars: (req, res, next) => {
-        let placeId = req.params.placeId;
-        if (!placeId || placeId === 'undefined' || placeId === 'null') {
-            return res.status(400).json({ error: 'Place ID is needed.' });
+        let query = req.params.query;
+        let min = 3;
+        if (!query || query === 'undefined' || query === 'null') {
+            return res.status(400).json({ error: 'Please enter a search keyword.' });
+        }
+        if (query.length < min) {
+            return res.status(400).json({ error: `Search Keyword must be ${min} characters or more` })
         }
 
-        let url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${placeId}&type=bar&key=${config.google_api_key}`;
+        let url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&type=bar&key=${config.google_api_key}`;
         request.get(url)
             .end((err, response) => {
                 if (err) {

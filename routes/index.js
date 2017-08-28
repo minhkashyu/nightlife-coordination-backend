@@ -21,5 +21,6 @@ export default (app) => {
     // Google Places Routes
     //=========================
 
-    apiRoutes.get('/places/:placeId', googleController.getBars);
+    apiRoutes.get('/places/:query', googleController.getBars);
+    apiRoutes.get('/places', googleController.getBars);
 };
