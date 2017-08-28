@@ -23,7 +23,7 @@ export default {
                     return next(err);
                 }
 
-                res.status(200).json({ results: response.body.results });
+                res.status(200).json({ bars: response.body.results });
             });
     }
 };
