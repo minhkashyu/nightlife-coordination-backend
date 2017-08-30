@@ -7,8 +7,9 @@
     },
     "main": "server.js",
     "scripts": {
+        "start": "cross-env NODE_ENV=production babel-node server.js",
+        "dev": "cross-env NODE_ENV=development babel-node server.js",
         "test": "cross-env NODE_ENV=test ./tests/config/test.sh",
-        "start": "cross-env NODE_ENV=development babel-node server.js",
         "refresh": "rm -rf node_modules && yarn cache clean && yarn",
         "killallport": "killall -9 node",
         "findpid": "ps -aux | grep node"
