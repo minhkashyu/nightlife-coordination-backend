@@ -18,11 +18,10 @@ const github = new GitHubStrategy({
                 }
                 else {
                     let newUser = new User();
-
                     newUser.github.id = profile.id;
                     newUser.github.username = profile.username;
                     newUser.github.displayName = profile.displayName;
-                    newUser.github.email = profile.emails[0].value;
+                    newUser.github.email = !profile.emails ? '' : profile.emails[0].value;
 
                     newUser.save(err => {
                         if (err) {

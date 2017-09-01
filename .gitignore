@@ -9,6 +9,7 @@
 .env.production
 
 # others
+.idea/
 .jshintrc
 .jshintignore
 

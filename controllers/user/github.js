@@ -3,13 +3,14 @@ import helpers from './helpers';
 import config from './../../config/main';
 
 export default {
-    githubLogin: passport.authenticate('github', { scope : 'email', session: false }),
+    githubLogin: passport.authenticate('github', { scope : 'user:email', session: false }),
     githubLoginCb: (req, res, next) => passport.authenticate('github', { session: false }, (err, user, info) => {
         if (err) {
             return next(err);
         }
         if (!user) {
-            return res.status(400).json({ error: info.message });
+            res.status(400).json({ error: info.message });
+            return next();
         }
 
         const userInfo = helpers.setGithubInfo(user);

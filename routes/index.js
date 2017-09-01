@@ -16,6 +16,7 @@ export default (app) => {
     // GET /api/auth/github
     authRoutes.get('/github', userController.githubLogin);
     authRoutes.get('/github/callback', userController.githubLoginCb);
+    authRoutes.get('/loginSuccess', userController.requireAuth, userController.loginSuccess);
 
     //=========================
     // Google Places Routes
