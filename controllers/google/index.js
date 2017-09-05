@@ -4,9 +4,10 @@ import superagent from 'superagent';
 let request = superagentPromisePlugin.patch(superagent);
 
 import config from './../../config/main';
+import helpers from './../bar/helpers';
 
 export default {
-    getBars: (req, res, next) => {
+    fetchBars: (req, res, next) => {
         let query = req.params.query;
         let min = 3;
         if (!query || query === 'undefined' || query === 'null') {
@@ -22,8 +23,41 @@ export default {
                 if (err) {
                     return next(err);
                 }
+                if (req.user) {
+                    helpers.fetchGoingBars(req.user.id, (err, goingBars) => {
+                        if (err) {
+                            res.status(err.status).send({ error: err.message });
+                            return next();
+                        }
 
-                res.status(200).json({ bars: response.body.results });
+                        helpers.goingTotals((err, goingTotals) => {
+                            if (err) {
+                                res.status(err.status).send({ error: err.message });
+                                return next();
+                            }
+
+                            return res.status(200).json({
+                                bars: response.body.results,
+                                goingBars: goingBars,
+                                goingTotals: goingTotals
+                            });
+                        });
+                    });
+                }
+                else {
+                    helpers.goingTotals((err, goingTotals) => {
+                        if (err) {
+                            res.status(err.status).send({error: err.message});
+                            return next();
+                        }
+
+                        return res.status(200).json({
+                            bars: response.body.results,
+                            goingBars: [],
+                            goingTotals: goingTotals
+                        });
+                    });
+                }
             });
     }
 };

@@ -17,6 +17,6 @@ const BarSchema = new Schema(
     }
 );
 
-BarSchema.path('createdAt').expires('24h');
+//BarSchema.path('createdAt').expires('24h');
 
 export default mongoose.model('Bar', BarSchema);
