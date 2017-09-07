@@ -1,4 +1,5 @@
 import Bar from './../../models/bar';
+import helpers from './helpers';
 
 export default (req, res, next) => {
     if (!req.user) {
@@ -7,7 +8,7 @@ export default (req, res, next) => {
     }
     let userId = req.user.id;
     Bar.find({ userId: userId })
-        .sort('created_at')
+        .sort('-createdAt')
         .exec((err, bars) => {
             if (err) {
                 res.send({ error: err });
@@ -20,17 +21,9 @@ export default (req, res, next) => {
                     return next();
                 }
 
-                helpers.goingTotals((err, goingTotals) => {
-                    if (err) {
-                        res.status(err.status).send({error: err.message});
-                        return next();
-                    }
-
-                    return res.status(200).json({
-                        bars: response.body.results,
-                        goingBars: goingBars,
-                        goingTotals: goingTotals
-                    });
+                return res.status(200).json({
+                    bars: bars,
+                    goingBars: goingBars
                 });
             });
         });

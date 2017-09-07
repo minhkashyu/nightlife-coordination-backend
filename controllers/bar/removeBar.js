@@ -15,8 +15,8 @@ export default (req, res, next) => {
     }
     Bar.findOne({ _id: barId })
         .exec((err, bar) => {
-            if (err) {
-                res.status(err.status).send({ error: err.message });
+            if (err || !bar) {
+                res.status(404).send({ error: `Bar with ID ${barId} cannot be found.` });
                 return next();
             }
 
