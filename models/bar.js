@@ -10,6 +10,14 @@ const BarSchema = new Schema(
         userId: {
             type: Schema.Types.ObjectId,
             ref: 'User'
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        address: {
+            type: String,
+            required: true
         }
     },
     {

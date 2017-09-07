@@ -6,13 +6,23 @@ export default (req, res, next) => {
         res.status(400).send({ error: 'Place ID is needed.' });
         return next();
     }
+    if (!req.body.name) {
+        res.status(400).send({ error: 'Bar name is needed.' });
+        return next();
+    }
+    if (!req.body.address) {
+        res.status(400).send({ error: 'Bar address is needed.' });
+        return next();
+    }
     if (!req.user) {
         res.status(500).send({ error: 'Logged-in user cannot be found.' });
         return next();
     }
     const bar = new Bar({
         placeId: req.body.placeId,
-        userId: req.user.id
+        userId: req.user.id,
+        name: req.body.name,
+        address: req.body.address
     });
 
     bar.save((err, newBar) => {
