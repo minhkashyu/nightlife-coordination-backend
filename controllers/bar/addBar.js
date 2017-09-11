@@ -1,54 +1,79 @@
+import async from 'async';
 import Bar from './../../models/bar';
 import helpers from './helpers';
 
-export default (req, res, next) => {
-    if (!req.body.placeId) {
-        res.status(400).send({ error: 'Place ID is needed.' });
-        return next();
+const validateContext = (context, callback) => {
+    if (!context.placeId) {
+        return callback({
+            status: 400,
+            message: 'Place ID is needed.'
+        });
     }
-    if (!req.body.name) {
-        res.status(400).send({ error: 'Bar name is needed.' });
-        return next();
+    if (!context.name) {
+        return callback({
+            status: 400,
+            message: 'Bar name is needed.'
+        });
     }
-    if (!req.body.address) {
-        res.status(400).send({ error: 'Bar address is needed.' });
-        return next();
+    if (!context.address) {
+        return callback({
+            status: 400,
+            message: 'Bar address is needed.'
+        });
     }
-    if (!req.user) {
-        res.status(500).send({ error: 'Logged-in user cannot be found.' });
-        return next();
+    if (!context.user) {
+        return callback({
+            status: 400,
+            message: 'Logged-in user cannot be found.'
+        });
     }
+
+    callback(null, context);
+};
+
+const saveBar = (context, callback) => {
     const bar = new Bar({
-        placeId: req.body.placeId,
-        userId: req.user.id,
-        name: req.body.name,
-        address: req.body.address
+        placeId: context.placeId,
+        userId: context.user.id,
+        name: context.name,
+        address: context.address
     });
 
     bar.save((err, newBar) => {
         if (err) {
-            res.send({ error: err });
-            return next(err);
+            return callback({
+                status: 422,
+                message: 'Cannot add new bar to the database.'
+            });
         }
 
-        helpers.fetchGoingBars(req.user.id, (err, goingBars) => {
-            if (err) {
-                res.status(err.status).send({ error: err.message });
-                return next();
-            }
+        context.newBar = newBar;
+        callback(null, context);
+    });
+};
 
-            helpers.goingTotals((err, goingTotals) => {
-                if (err) {
-                    res.status(err.status).send({error: err.message});
-                    return next();
-                }
+export default (req, res, next) => {
+    async.waterfall([
+        async.constant({
+            placeId: req.body.placeId,
+            name: req.body.name,
+            address: req.body.address,
+            user: req.user
+        }),
+        validateContext,
+        saveBar,
+        helpers.fetchGoingBars,
+        helpers.fetchGoingTotals
+    ], (err, result) => {
+        if (err) {
+            res.status(err.status).send({ error: err.message });
+            return next();
+        }
 
-                return res.status(200).json({
-                    bar: newBar,
-                    goingBars: goingBars,
-                    goingTotals: goingTotals
-                });
-            });
+        return res.status(200).json({
+            bar: result.newBar,
+            goingBars: result.goingBars,
+            goingTotals: result.goingTotals
         });
     });
-}
+};

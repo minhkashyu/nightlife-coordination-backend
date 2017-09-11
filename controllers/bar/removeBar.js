@@ -1,50 +1,63 @@
+import async from 'async';
 import Bar from './../../models/bar';
 import helpers from './helpers';
 
-export default (req, res, next) => {
-    let barId = req.params.barId;
+const validateContext = (context, callback) => {
+    let barId = context.barId;
     if (!barId || barId === 'undefined' || barId === 'null') {
         return callback({
             status: 400,
             message: 'Bar ID is needed.'
         });
     }
-    if (!req.user) {
-        res.status(500).send({ error: 'Logged-in user cannot be found.' });
-        return next();
-    }
+
+    callback(null, context);
+};
+
+const removeBar = (context, callback) => {
+    let barId = context.barId;
     Bar.findOne({ _id: barId })
         .exec((err, bar) => {
             if (err || !bar) {
-                res.status(404).send({ error: `Bar with ID ${barId} cannot be found.` });
-                return next();
+                return callback({
+                    status: 404,
+                    message: `Bar with ID ${barId} cannot be found.`
+                });
             }
 
             bar.remove(err => {
                 if (err) {
-                    res.send({ error: err });
-                    return next(err);
+                    return callback({
+                        status: 422,
+                        message: `Cannot remove bar with ID ${barId}.`
+                    });
                 }
 
-                helpers.fetchGoingBars(req.user.id, (err, goingBars) => {
-                    if (err) {
-                        res.status(err.status).send({ error: err.message });
-                        return next();
-                    }
-
-                    helpers.goingTotals((err, goingTotals) => {
-                        if (err) {
-                            res.status(err.status).send({error: err.message});
-                            return next();
-                        }
-
-                        return res.status(200).json({
-                            bar: {},
-                            goingBars: goingBars,
-                            goingTotals: goingTotals
-                        });
-                    });
-                });
+                callback(null, context);
             });
+        });
+};
+
+export default (req, res, next) => {
+    async.waterfall([
+        async.constant({
+            user: req.user,
+            barId: req.params.barId
+        }),
+        validateContext,
+        removeBar,
+        helpers.fetchGoingBars,
+        helpers.fetchGoingTotals
+    ], (err, result) => {
+        if (err) {
+            res.status(err.status).send({ error: err.message });
+            return next();
+        }
+
+        return res.status(200).json({
+            bar: {},
+            goingBars: result.goingBars,
+            goingTotals: result.goingTotals
+        });
     });
 };

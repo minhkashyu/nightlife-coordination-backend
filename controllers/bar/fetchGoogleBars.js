@@ -1,9 +1,9 @@
+import async from 'async';
+
 require('es6-promise').polyfill();
 import superagentPromisePlugin from 'superagent-promise-plugin';
 import superagent from 'superagent';
 let request = superagentPromisePlugin.patch(superagent);
-
-import async from 'async';
 
 import config from './../../config/main';
 import helpers from './../bar/helpers';
@@ -23,6 +23,7 @@ const validateContext = (context, callback) => {
             message: `Search Keyword must be ${min} characters or more`
         });
     }
+
     callback(null, context);
 };
 
@@ -32,42 +33,24 @@ const callGoogleApi = (context, callback) => {
         .end((err, response) => {
             if (err) {
                 return callback({
-                    status: 500,
+                    status: 422,
                     message: 'Error when connecting to the Google Places API.'
                 });
             }
+
             context.googleBars = response.body.results;
             callback(null, context);
         });
 };
 
 const fetchGoingBars = (context, callback) => {
-    context.goingBars = [];
     if (context.user) {
-        helpers.fetchGoingBars(context.user.id, (err, goingBars) => {
-            if (err) {
-                return callback({
-                    status: 500,
-                    message: 'Cannot fetch going bars.'
-                });
-            }
-            context.goingBars = goingBars;
-        });
+        helpers.fetchGoingBars(context, callback);
     }
-    callback(null, context);
-};
-
-const getGoingTotals = (context, callback) => {
-    helpers.goingTotals((err, goingTotals) => {
-        if (err) {
-            return callback({
-                status: 500,
-                message: 'Cannot get going totals.'
-            });
-        }
-        context.goingTotals = goingTotals;
+    else {
+        context.goingBars = [];
         callback(null, context);
-    });
+    }
 };
 
 export default (req, res, next) => {
@@ -79,12 +62,13 @@ export default (req, res, next) => {
         validateContext,
         callGoogleApi,
         fetchGoingBars,
-        getGoingTotals
+        helpers.fetchGoingTotals
     ], (err, result) => {
         if (err) {
             res.status(err.status).send({ error: err.message });
             return next();
         }
+
         return res.status(200).json({
             bars: result.googleBars,
             goingBars: result.goingBars,
