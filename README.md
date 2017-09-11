@@ -4,8 +4,7 @@ A Free Code Camp Dynamic Web Application Project. A Full Stack Javascript App us
 
 This is the React client side of the Fullstack App. The client side can be found at https://github.com/minhkashyu/nightlife-coordination-frontend.
 
-THIS APP IS UNDER CONSTRUCTION.
-You can run the App at https://mks-nightlife-coordination-app.herokuapp.com/
+You can run the App at https://mks-nightlife-coordination-app.herokuapp.com/.
 
 ## User Stories
 
