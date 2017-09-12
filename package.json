@@ -10,7 +10,7 @@
     "start": "cross-env NODE_ENV=production babel-node server.js",
     "dev": "cross-env NODE_ENV=development babel-node server.js",
     "test": "cross-env NODE_ENV=test ./tests/config/test.sh",
-    "refresh": "rm -rf node_modules && yarn cache clean && yarn",
+    "refresh": "rm -rf node_modules && npm cache clean && npm install",
     "killallport": "killall -9 node",
     "findpid": "ps -aux | grep node"
   },
@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
-    "chai": "^4.1.1",
+    "chai": "^4.1.2",
     "chai-http": "^3.0.0",
     "lodash": "^4.17.4",
     "mocha": "^3.5.0",
