@@ -2,7 +2,7 @@
 
 A Free Code Camp Dynamic Web Application Project. A Full Stack Javascript App using Node, Express, Passport, MongoDB, React/Redux and Semantic UI with Google Material theme.
 
-This is the React client side of the Fullstack App. The client side can be found at https://github.com/minhkashyu/nightlife-coordination-frontend.
+This is the API server side of the Fullstack App. The client side can be found at https://github.com/minhkashyu/nightlife-coordination-frontend.
 
 You can run the App at https://mks-nightlife-coordination-app.herokuapp.com/.
 
