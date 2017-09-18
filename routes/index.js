@@ -17,7 +17,9 @@ export default (app) => {
     authRoutes.get('/github', userController.githubLogin);
     authRoutes.get('/github/callback', userController.githubLoginCb);
     authRoutes.get('/loginSuccess', userController.requireAuth, userController.loginSuccess);
-
+    if (app.get('env') === 'test') {
+        authRoutes.post('/login-test', userController.loginTest);
+    }
     //=========================
     // Google Places Routes
     //=========================
@@ -35,7 +37,7 @@ export default (app) => {
 
     // fetchMyBars()
     apiRoutes.get('/bars', userController.requireAuth, barController.fetchMyBars);
-    // addBar(placeId)
+    // addBar(placeId, name, address)
     apiRoutes.post('/bars', userController.requireAuth, barController.addBar);
     // removeBar(barId)
     apiRoutes.delete('/bars/:barId', userController.requireAuth, barController.removeBar);
