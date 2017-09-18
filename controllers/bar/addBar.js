@@ -21,12 +21,6 @@ const validateContext = (context, callback) => {
             message: 'Bar address is needed.'
         });
     }
-    if (!context.user) {
-        return callback({
-            status: 400,
-            message: 'Logged-in user cannot be found.'
-        });
-    }
 
     callback(null, context);
 };
