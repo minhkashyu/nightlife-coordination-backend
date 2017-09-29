@@ -30,7 +30,7 @@ describe('GET /api/places/:query', () => {
 
     const callApi = (query) => chai.request(server).get(`/api/places/${query}`);
 
-    it('it should NOT fetch google bars without a search keyword', (done) => {
+    it('it should NOT fetch google bars without a search keyword', done => {
         callApi('')
             .end((err, res) => {
                 assert.equal(res.status, 400);
@@ -39,7 +39,7 @@ describe('GET /api/places/:query', () => {
             });
     });
 
-    it(`it should NOT fetch google bars if search keyword is less then ${min} characters`, (done) => {
+    it(`it should NOT fetch google bars if search keyword is less then ${min} characters`, done => {
         callApi('te')
             .end((err, res) => {
                 assert.equal(res.status, 400);
@@ -48,12 +48,12 @@ describe('GET /api/places/:query', () => {
             });
     });
 
-    it('it should fetch google bars without authorization', (done) => {
+    it('it should fetch google bars without authorization', done => {
         callApi(query)
             .end((err, res) => {
                 assert.equal(err, null);
                 assert.equal(res.status, 200);
-                assert.ok(res.body.bars.length > 0);
+                assert.isOk(res.body.bars.length > 0);
                 assert.equal(res.body.goingBars.length, 0);
                 assert.equal(res.body.goingTotals.length, 1);
                 assert.equal(res.body.goingTotals[0]._id, newBar.placeId);
@@ -62,7 +62,7 @@ describe('GET /api/places/:query', () => {
             });
     });
 
-    it('it should fetch google bars with authorization', (done) => {
+    it('it should fetch google bars with authorization', done => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
                 callApi(query)
@@ -70,7 +70,7 @@ describe('GET /api/places/:query', () => {
                     .end((err, res) => {
                         assert.equal(err, null);
                         assert.equal(res.status, 200);
-                        assert.ok(res.body.bars.length > 0);
+                        assert.isOk(res.body.bars.length > 0);
 
                         assert.equal(res.body.goingBars.length, 1);
                         let goingBar = res.body.goingBars[0];
