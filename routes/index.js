@@ -24,12 +24,8 @@ export default (app) => {
     // Google Places Routes
     //=========================
     // fetchBars(query, isAuthenticated)
-    apiRoutes.get('/places/:query', barController.fetchGoogleBars);
-    apiRoutes.get('/places', barController.fetchGoogleBars);
-
-    //TODO: /places/loggedin did not return { error: 'Please enter a search keyword.' }
-    apiRoutes.get('/places/loggedin/:query', userController.requireAuth, barController.fetchGoogleBars);
-    apiRoutes.get('/places/loggedin', userController.requireAuth, barController.fetchGoogleBars);
+    apiRoutes.get('/places/:query', userController.checkAuth, barController.fetchGoogleBars);
+    apiRoutes.get('/places', userController.checkAuth, barController.fetchGoogleBars);
 
     //=========================
     // Bar Routes
