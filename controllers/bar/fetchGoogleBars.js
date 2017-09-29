@@ -1,4 +1,6 @@
 import async from 'async';
+import _ from 'lodash';
+import passport from './../../config/passport';
 
 require('es6-promise').polyfill();
 import superagentPromisePlugin from 'superagent-promise-plugin';
@@ -11,7 +13,7 @@ import helpers from './../bar/helpers';
 const validateContext = (context, callback) => {
     let query = context.query;
     let min = 3;
-    if (!query || query === 'undefined' || query === 'null') {
+    if (!query) {
         return callback({
             status: 400,
             message: 'Please enter a search keyword.'
@@ -24,6 +26,7 @@ const validateContext = (context, callback) => {
         });
     }
 
+    context.query = _.escape(query);
     callback(null, context);
 };
 
