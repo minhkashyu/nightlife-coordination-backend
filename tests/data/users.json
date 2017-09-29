@@ -1,2 +1,4 @@
 {"_id":{"$oid":"59a96145597c4b02681ce47c"},"github":{"email":"localtest@hotmail.com",
 "displayName":"Local Test","username":"localtest","id":"123456"}}
+{"_id":{"$oid":"59a96145597c4b02681cf58d"},"github":{"email":"secondlocal@hotmail.com",
+"displayName":"Second Local","username":"secondlocal","id":"789012"}}
