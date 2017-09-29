@@ -14,7 +14,7 @@ let newBar = {
     address: '1248 Cambridge St, Cambridge, MA 02139, United States'
 };
 
-describe.only('POST /api/bars', () => {
+describe('POST /api/bars', () => {
     beforeEach(done => {
         server = app.server;
         done();
