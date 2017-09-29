@@ -5,13 +5,6 @@ let startOfToday = moment.utc().startOf('day').toDate(); // set to 12:00 am toda
 const helpers = {
     fetchGoingBars: (context, callback) => {
         let userId = context.user.id;
-        if (!userId || userId === 'undefined' || userId === 'null') {
-            return callback({
-                status: 400,
-                message: 'User ID is needed.'
-            });
-        }
-
         Bar.find({
             userId: userId,
             createdAt: { $gte: startOfToday }
