@@ -51,11 +51,11 @@ describe('GET /api/places/:query', () => {
     it('it should fetch google bars without authorization', done => {
         callApi(query)
             .end((err, res) => {
-                assert.equal(err, null);
+                assert.isNull(err);
                 assert.equal(res.status, 200);
                 assert.isOk(res.body.bars.length > 0);
-                assert.equal(res.body.goingBars.length, 0);
-                assert.equal(res.body.goingTotals.length, 1);
+                assert.lengthOf(res.body.goingBars, 0);
+                assert.lengthOf(res.body.goingTotals, 1);
                 assert.equal(res.body.goingTotals[0]._id, newBar.placeId);
                 assert.equal(res.body.goingTotals[0].count, 1);
                 done();
@@ -65,18 +65,19 @@ describe('GET /api/places/:query', () => {
     it('it should fetch google bars with authorization', done => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
-                assert.equal(err, null);
+                assert.isNull(err);
 
                 let user = res.body.user;
                 let startOfToday = moment.utc().startOf('day').toDate();
+
                 callApi(query)
                     .set('Authorization', res.body.token)
                     .end((err, res) => {
-                        assert.equal(err, null);
+                        assert.isNull(err);
                         assert.equal(res.status, 200);
                         assert.isOk(res.body.bars.length > 0);
 
-                        assert.equal(res.body.goingBars.length, 1);
+                        assert.lengthOf(res.body.goingBars, 1);
                         let goingBar = res.body.goingBars[0];
                         assert.equal(goingBar.placeId, newBar.placeId);
                         assert.equal(goingBar.name, newBar.name);
@@ -85,7 +86,7 @@ describe('GET /api/places/:query', () => {
                         assert.isOk(moment(goingBar.createdAt).toDate() > startOfToday);
                         assert.isOk(moment(goingBar.updatedAt).toDate() > startOfToday);
 
-                        assert.equal(res.body.goingTotals.length, 1);
+                        assert.lengthOf(res.body.goingTotals, 1);
                         assert.equal(res.body.goingTotals[0]._id, newBar.placeId);
                         assert.equal(res.body.goingTotals[0].count, 1);
                         done();

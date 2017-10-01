@@ -40,23 +40,24 @@ describe('GET /api/bars', () => {
     it('it should fetch my bars', done => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
-                assert.equal(err, null);
+                assert.isNull(err);
 
                 let user = res.body.user;
                 let startOfToday = moment.utc().startOf('day').toDate();
+
                 callApi()
                     .set('Authorization', res.body.token)
                     .end((err, res) => {
-                        assert.equal(err, null);
+                        assert.isNull(err);
                         assert.equal(res.status, 200);
 
                         let bars = res.body.bars;
-                        assert.equal(bars.length, 5);
+                        assert.lengthOf(bars, 5);
                         _.forEach(bars, bar => {
                             assert.equal(bar.userId, user.id);
                         });
 
-                        assert.equal(res.body.goingBars.length, 1);
+                        assert.lengthOf(res.body.goingBars, 1);
                         let goingBar = res.body.goingBars[0];
                         assert.equal(goingBar.placeId, newBar.placeId);
                         assert.equal(goingBar.name, newBar.name);

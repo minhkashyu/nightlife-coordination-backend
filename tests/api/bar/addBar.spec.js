@@ -51,6 +51,8 @@ describe('POST /api/bars', () => {
     it('it should NOT add new bar without placeId', (done) => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
+                assert.isNull(err);
+
                 callApi(res.body.token)
                     .send({
                         name: newBar.name,
@@ -67,6 +69,8 @@ describe('POST /api/bars', () => {
     it('it should NOT add new bar without bar name', (done) => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
+                assert.isNull(err);
+
                 callApi(res.body.token)
                     .send({
                         placeId: newBar.placeId,
@@ -83,6 +87,8 @@ describe('POST /api/bars', () => {
     it('it should NOT add new bar without bar address', (done) => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
+                assert.isNull(err);
+
                 callApi(res.body.token)
                     .send({
                         placeId: newBar.placeId,
@@ -99,14 +105,15 @@ describe('POST /api/bars', () => {
     it('it should add new bar', (done) => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
-                assert.equal(err, null);
+                assert.isNull(err);
 
                 let user = res.body.user;
                 let startOfToday = moment.utc().startOf('day').toDate();
+
                 callApi(res.body.token)
                     .send(newBar)
                     .end((err, res) => {
-                        assert.equal(err, null);
+                        assert.isNull(err);
                         assert.equal(res.status, 200);
 
                         let bar = res.body.bar;
@@ -115,7 +122,7 @@ describe('POST /api/bars', () => {
                         assert.equal(bar.name, newBar.name);
                         assert.equal(bar.address, newBar.address);
 
-                        assert.equal(res.body.goingBars.length, 1);
+                        assert.lengthOf(res.body.goingBars, 1);
                         let goingBar = res.body.goingBars[0];
                         assert.equal(goingBar.placeId, newBar.placeId);
                         assert.equal(goingBar.name, newBar.name);
@@ -125,7 +132,7 @@ describe('POST /api/bars', () => {
                         assert.isOk(moment(goingBar.updatedAt).toDate() > startOfToday);
 
                         let goingTotals = res.body.goingTotals;
-                        assert.equal(goingTotals.length, 1);
+                        assert.lengthOf(goingTotals, 1);
                         assert.equal(goingTotals[0]._id, bar.placeId);
                         assert.equal(goingTotals[0].count, 1);
 
