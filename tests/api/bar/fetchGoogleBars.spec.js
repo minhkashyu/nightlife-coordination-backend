@@ -31,7 +31,7 @@ describe('GET /api/places/:query', () => {
     const callApi = (query) => chai.request(server).get(`/api/places/${query}`);
 
     it('it should NOT fetch google bars without a search keyword', done => {
-        callApi('')
+        callApi()
             .end((err, res) => {
                 assert.equal(res.status, 400);
                 assert.equal(res.body.error, 'Please enter a search keyword.');

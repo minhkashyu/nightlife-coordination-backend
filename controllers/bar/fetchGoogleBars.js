@@ -13,7 +13,7 @@ import helpers from './../bar/helpers';
 const validateContext = (context, callback) => {
     let query = context.query;
     let min = 3;
-    if (!query) {
+    if (!query || query === 'undefined') {
         return callback({
             status: 400,
             message: 'Please enter a search keyword.'
