@@ -4,7 +4,7 @@ import helpers from './helpers';
 
 const validateContext = (context, callback) => {
     let barId = context.barId;
-    if (!barId || barId === 'undefined' || barId === 'null') {
+    if (!barId || barId === 'undefined') {
         return callback({
             status: 400,
             message: 'Bar ID is needed.'
