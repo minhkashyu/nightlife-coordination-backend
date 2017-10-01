@@ -5,8 +5,8 @@ let assert = chai.assert;
 import {describe, beforeEach, afterEach, it} from 'mocha';
 import _ from 'lodash';
 
+import moment from 'moment';
 import auth from './../../config/auth';
-import user from './../../config/user';
 let app = require('./../../../server');
 let server;
 
@@ -40,6 +40,8 @@ describe('GET /api/bars', () => {
     it('it should fetch my bars', done => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
+                let user = res.body.user;
+                let startOfToday = moment.utc().startOf('day').toDate();
                 callApi()
                     .set('Authorization', res.body.token)
                     .end((err, res) => {
@@ -49,7 +51,7 @@ describe('GET /api/bars', () => {
                         let bars = res.body.bars;
                         assert.equal(bars.length, 5);
                         _.forEach(bars, bar => {
-                            assert.equal(bar.userId, user.githubUser().id);
+                            assert.equal(bar.userId, user.id);
                         });
 
                         assert.equal(res.body.goingBars.length, 1);
@@ -57,7 +59,9 @@ describe('GET /api/bars', () => {
                         assert.equal(goingBar.placeId, newBar.placeId);
                         assert.equal(goingBar.name, newBar.name);
                         assert.equal(goingBar.address, newBar.address);
-                        assert.equal(goingBar.userId, user.githubUser().id);
+                        assert.equal(goingBar.userId, user.id);
+                        assert.isOk(moment(goingBar.createdAt).toDate() > startOfToday);
+                        assert.isOk(moment(goingBar.updatedAt).toDate() > startOfToday);
 
                         done();
                     });

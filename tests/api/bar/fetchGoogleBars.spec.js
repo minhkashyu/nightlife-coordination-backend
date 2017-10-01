@@ -5,8 +5,8 @@ let assert = chai.assert;
 import {describe, beforeEach, afterEach, it} from 'mocha';
 import _ from 'lodash';
 
+import moment from 'moment';
 import auth from './../../config/auth';
-import user from './../../config/user';
 let app = require('./../../../server');
 let server;
 
@@ -65,6 +65,8 @@ describe('GET /api/places/:query', () => {
     it('it should fetch google bars with authorization', done => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
+                let user = res.body.user;
+                let startOfToday = moment.utc().startOf('day').toDate();
                 callApi(query)
                     .set('Authorization', res.body.token)
                     .end((err, res) => {
@@ -77,7 +79,9 @@ describe('GET /api/places/:query', () => {
                         assert.equal(goingBar.placeId, newBar.placeId);
                         assert.equal(goingBar.name, newBar.name);
                         assert.equal(goingBar.address, newBar.address);
-                        assert.equal(goingBar.userId, user.githubUser().id);
+                        assert.equal(goingBar.userId, user.id);
+                        assert.isOk(moment(goingBar.createdAt).toDate() > startOfToday);
+                        assert.isOk(moment(goingBar.updatedAt).toDate() > startOfToday);
 
                         assert.equal(res.body.goingTotals.length, 1);
                         assert.equal(res.body.goingTotals[0]._id, newBar.placeId);

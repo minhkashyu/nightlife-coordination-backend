@@ -4,6 +4,7 @@ chai.use(chaiHttp);
 let assert = chai.assert;
 import {describe, beforeEach, afterEach, it} from 'mocha';
 
+import moment from 'moment';
 import auth from './../../config/auth';
 let app = require('./../../../server');
 let server;
@@ -99,6 +100,7 @@ describe('POST /api/bars', () => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
                 let user = res.body.user;
+                let startOfToday = moment.utc().startOf('day').toDate();
                 callApi(res.body.token)
                     .send(newBar)
                     .end((err, res) => {
@@ -111,13 +113,14 @@ describe('POST /api/bars', () => {
                         assert.equal(bar.name, newBar.name);
                         assert.equal(bar.address, newBar.address);
 
-                        let goingBars = res.body.goingBars;
-                        assert.equal(goingBars.length, 1);
-                        assert.equal(goingBars[0]._id, bar._id);
-                        assert.equal(goingBars[0].placeId, newBar.placeId);
-                        assert.equal(goingBars[0].userId, user.id);
-                        assert.equal(goingBars[0].name, newBar.name);
-                        assert.equal(goingBars[0].address, newBar.address);
+                        assert.equal(res.body.goingBars.length, 1);
+                        let goingBar = res.body.goingBars[0];
+                        assert.equal(goingBar.placeId, newBar.placeId);
+                        assert.equal(goingBar.name, newBar.name);
+                        assert.equal(goingBar.address, newBar.address);
+                        assert.equal(goingBar.userId, user.id);
+                        assert.isOk(moment(goingBar.createdAt).toDate() > startOfToday);
+                        assert.isOk(moment(goingBar.updatedAt).toDate() > startOfToday);
 
                         let goingTotals = res.body.goingTotals;
                         assert.equal(goingTotals.length, 1);
