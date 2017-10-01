@@ -40,6 +40,8 @@ describe('GET /api/bars', () => {
     it('it should fetch my bars', done => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
+                assert.equal(err, null);
+
                 let user = res.body.user;
                 let startOfToday = moment.utc().startOf('day').toDate();
                 callApi()

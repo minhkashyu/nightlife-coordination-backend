@@ -65,6 +65,8 @@ describe('GET /api/places/:query', () => {
     it('it should fetch google bars with authorization', done => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
+                assert.equal(err, null);
+
                 let user = res.body.user;
                 let startOfToday = moment.utc().startOf('day').toDate();
                 callApi(query)

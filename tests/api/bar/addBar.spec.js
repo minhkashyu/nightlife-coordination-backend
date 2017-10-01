@@ -99,6 +99,8 @@ describe('POST /api/bars', () => {
     it('it should add new bar', (done) => {
         auth.loginAsGithubUser(server)
             .end((err, res) => {
+                assert.equal(err, null);
+
                 let user = res.body.user;
                 let startOfToday = moment.utc().startOf('day').toDate();
                 callApi(res.body.token)
